@@ -14,7 +14,7 @@ public class GoogleRecognizerTest {
 
     @Test
     public void testRecognizeFile() throws Exception {
-        String result = GoogleRecognizer.syncRecognizeFile(fileName);
+        String result = GoogleRecognizer.RecognizeFile(fileName);
         System.out.println(result);
         assertThat(result).contains("my fellow Americans");
     }

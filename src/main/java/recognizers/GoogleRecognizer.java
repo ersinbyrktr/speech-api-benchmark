@@ -16,7 +16,7 @@ public class GoogleRecognizer {
      *
      * @param fileName the path to a PCM audio file to transcribe.
      */
-    public static String syncRecognizeFile(String fileName) throws Exception, IOException {
+    public static String RecognizeFile(String fileName) throws Exception, IOException {
         SpeechClient speech = SpeechClient.create();
         StringBuilder resultText = new StringBuilder();
         Path path = Paths.get(fileName);
