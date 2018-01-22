@@ -16,7 +16,7 @@ public class GoogleRecognizer {
      *
      * @param fileName the path to a PCM audio file to transcribe.
      */
-    public static String RecognizeFile(String fileName) throws Exception, IOException {
+    public static String RecognizeFile(String fileName, String langCode) throws Exception, IOException {
         SpeechClient speech = SpeechClient.create();
         StringBuilder resultText = new StringBuilder();
         Path path = Paths.get(fileName);
@@ -25,9 +25,7 @@ public class GoogleRecognizer {
 
         // Configure request with local raw PCM audio
         RecognitionConfig config = RecognitionConfig.newBuilder()
-                .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
-                .setLanguageCode("en-US")
-                .setSampleRateHertz(16000)
+                .setLanguageCode(langCode)
                 .build();
         RecognitionAudio audio = RecognitionAudio.newBuilder()
                 .setContent(audioBytes)
