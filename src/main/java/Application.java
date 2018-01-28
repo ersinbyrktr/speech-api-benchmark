@@ -13,7 +13,7 @@ public class Application {
     // Directory paths
     private static final String AUDIO_DIR = "./resources/audio/";
     private static final String TEXT_DIR = "./resources/text/";
-    private static final String AUDIO_FORMAT = ".flac";
+    private static final String AUDIO_FORMAT = ".wav";
     private static final String TEXT_FORMAT = ".txt";
 
     private static List<String> getResourceNames(){
@@ -36,7 +36,7 @@ public class Application {
     private static void testBing() throws Exception  {
         System.out.println("Bing Speech Api Call:");
         //InputStream input = new FileInputStream(Paths.get(AUDIO_DIR+"audio.flac").toFile());
-        String result = BingRecognizer.process(Paths.get(AUDIO_DIR+"audio.flac"), "en-US");
+        String result = BingRecognizer.process(Paths.get(AUDIO_DIR+"audio.wav"), "en-US");
         System.out.println(result);
     }
 
