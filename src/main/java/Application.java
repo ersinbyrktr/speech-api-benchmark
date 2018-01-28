@@ -111,15 +111,17 @@ public class Application {
 
         try {
             resultGoogle = GoogleRecognizer.RecognizeFile(audioFileName, lang);
-            System.out.println("GCP Speech Api Call:");
+            System.out.println("\nGCP Speech Api Call:");
             System.out.println(resultGoogle);
             stats[0] = new ApproximateStringMatching().computeDistance(expectedResult, resultGoogle);
+            ApproximateStringMatching.printResult(stats[0]);
 
             resultBing = BingRecognizer.process(audioFileName, lang);
             if (resultBing != null) {
-                System.out.println("Bing Speech Api Call:");
+                System.out.println("\nBing Speech Api Call:");
                 System.out.println(resultBing);
                 stats[1] = new ApproximateStringMatching().computeDistance(expectedResult, resultBing);
+                ApproximateStringMatching.printResult(stats[1]);
             }
         } catch (Exception e) {
             e.printStackTrace();
