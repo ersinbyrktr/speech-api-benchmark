@@ -2,7 +2,6 @@ import recognizers.BingRecognizer;
 import recognizers.GoogleRecognizer;
 
 import java.io.*;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;

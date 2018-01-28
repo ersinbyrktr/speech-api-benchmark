@@ -57,7 +57,7 @@ public class BingRecognizer {
     connection.setDoInput(true);
     connection.setDoOutput(true); 
     connection.setRequestMethod("POST");
-    connection.setRequestProperty("Content-type", "audio/x-flac; rate=8000");
+    connection.setRequestProperty("Content-type", "audio/x-flac; rate=16000");
     connection.setRequestProperty("Accept", "application/json;text/xml");
     connection.setRequestProperty("Authorization", "Bearer " + getAuth().getToken());
     connection.connect();
