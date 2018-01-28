@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 
 public class GoogleRecognizer {
 
@@ -43,6 +44,6 @@ public class GoogleRecognizer {
             //System.out.printf("Transcription: %s%n", alternative.getTranscript());
         }
         speech.close();
-        return resultText.toString();
+        return resultText.toString().toLowerCase(Locale.forLanguageTag(langCode));
     }
 }

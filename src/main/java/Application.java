@@ -1,10 +1,11 @@
 import recognizers.BingRecognizer;
 import recognizers.GoogleRecognizer;
+import utility.ApproximateStringMatching;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Application {
     // GOOGLE_CLOUD_PROJECT should point to the json file path
@@ -29,14 +30,15 @@ public class Application {
     }
 
     public static void main(String[] args) throws Exception  {
-        testBing();
+        //testBing();
+
         doBenchmark();
     }
 
     private static void testBing() throws Exception  {
         System.out.println("Bing Speech Api Call:");
         //InputStream input = new FileInputStream(Paths.get(AUDIO_DIR+"audio.flac").toFile());
-        String result = BingRecognizer.process(Paths.get(AUDIO_DIR+"audio.wav"), "en-US");
+        String result = BingRecognizer.process(AUDIO_DIR+"1517156803155.wav", "en-US");
         System.out.println(result);
     }
 
@@ -52,7 +54,8 @@ public class Application {
                 br = new BufferedReader(new FileReader(textFileName));
                 String langCode = br.readLine();
                 String expectedResult = br.readLine();
-                compareServices(audioFileName, langCode);
+                if (expectedResult!=null && !expectedResult.isEmpty())
+                    compareServices(audioFileName, expectedResult, langCode);
             } catch (FileNotFoundException e) {
                 System.out.println(String.format("File %s cannot be found", textFileName));
                 e.printStackTrace();
@@ -64,16 +67,26 @@ public class Application {
         }
     }
 
-    private static void compareServices(String resourceName, String lang) {
-        String result = null;
+    private static void compareServices(String audioFileName, String expectedResult, String lang) {
+        String resultGoogle;
+        String resultBing;
+
         try {
+            resultGoogle = GoogleRecognizer.RecognizeFile(audioFileName, lang);
             System.out.println("GCP Speech Api Call:");
-            result = GoogleRecognizer.RecognizeFile(resourceName, lang);
+            System.out.println(resultGoogle);
+            final Map<String, Integer> GoogleStats = ApproximateStringMatching.computeDistance(expectedResult, resultGoogle);
+
+            resultBing = BingRecognizer.process(audioFileName, lang);
+            if (resultBing != null) {
+                System.out.println("Bing Speech Api Call:");
+                System.out.println(resultBing);
+                final Map<String, Integer> BingStats = ApproximateStringMatching.computeDistance(expectedResult, resultBing);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return;
         }
-        System.out.println(result);
         /*for (String word: result.split(" ")) {
 
         }*/
