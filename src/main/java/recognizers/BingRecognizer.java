@@ -99,12 +99,13 @@ public class BingRecognizer {
     JsonParser parser = new JsonParser();
     String res = getResponse(upload(filepath, connect(langCode)));
     JsonObject o = parser.parse(res).getAsJsonObject();
-    if(o.has("RecognitionStatus")){
+    if(o.has("RecognitionStatus") && o.get("RecognitionStatus").toString().equals("True")){
         final JsonObject bestResult = o.getAsJsonArray("NBest").get(0).getAsJsonObject();
         final String itn = bestResult.get("ITN").toString();
         return itn.substring(1, itn.length()-1).toLowerCase(Locale.forLanguageTag(langCode));
     }
     else{
+        System.out.println(o.toString());
         return null;
     }
   }

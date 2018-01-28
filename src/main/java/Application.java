@@ -3,9 +3,6 @@ import recognizers.GoogleRecognizer;
 import utility.ApproximateStringMatching;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,29 +32,13 @@ public class Application {
     public static void main(String[] args) throws Exception  {
         //testBing();
 
-        //doBenchmark();
-        String text = "Hello boy what's up???";
-        String url = "https://translate.google.com/translate_tts?ie=UTF-8&q="+ URLEncoder.encode(text).replace("+", "%20")+"&tl=en&tk=653449.1021630&client=t&prev=input";
-
-        final URL url1 = new URL(url);
-        System.out.println(url1.toURI());
-        URLConnection conn = url1.openConnection();
-        conn.setRequestProperty("User-Agent", "Mozilla/4.76");
-        InputStream is = conn.getInputStream();
-
-        OutputStream outstream = new FileOutputStream(new File("file.mp3"));
-        byte[] buffer = new byte[4096];
-        int len;
-        while ((len = is.read(buffer)) > 0) {
-            outstream.write(buffer, 0, len);
-        }
-        outstream.close();
+        doBenchmark();
     }
 
     private static void testBing() throws Exception  {
         System.out.println("Bing Speech Api Call:");
         //InputStream input = new FileInputStream(Paths.get(AUDIO_DIR+"audio.flac").toFile());
-        String result = BingRecognizer.process(AUDIO_DIR+"Eisenhower.wav", "en-US");
+        String result = BingRecognizer.process(AUDIO_DIR+"1517156803155.wav", "en-US");
         System.out.println(result);
     }
 
