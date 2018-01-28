@@ -3,9 +3,9 @@ import recognizers.GoogleRecognizer;
 import utility.ApproximateStringMatching;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static utility.ApproximateStringMatching.printResult;
 
 public class Application {
     // GOOGLE_CLOUD_PROJECT should point to the json file path
@@ -45,6 +45,9 @@ public class Application {
 
     private static void doBenchmark(){
         List<String> resourceNames = getResourceNames();
+        Set<Map<String, Object>> totalResultGCP = new HashSet<>();
+        Set<Map<String, Object>> totalResultBing = new HashSet<>();
+        Map[] stats;
         for (String resourceName:resourceNames) {
             String rawFileName =  resourceName.split("\\.")[0];
             String audioFileName =  AUDIO_DIR + rawFileName+ AUDIO_FORMAT;
@@ -54,8 +57,13 @@ public class Application {
                 br = new BufferedReader(new FileReader(textFileName));
                 String langCode = br.readLine();
                 String expectedResult = br.readLine();
-                if (expectedResult!=null && !expectedResult.isEmpty())
-                    compareServices(audioFileName, expectedResult, langCode);
+                if (expectedResult!=null && !expectedResult.isEmpty()) {
+
+                    stats = compareServices(audioFileName, expectedResult, langCode);
+
+                    totalResultGCP.add(stats[0]);
+                    totalResultBing.add(stats[1]);
+                }
             } catch (FileNotFoundException e) {
                 System.out.println(String.format("File %s cannot be found", textFileName));
                 e.printStackTrace();
@@ -65,30 +73,60 @@ public class Application {
             }
 
         }
+        //Create and initialize map
+        double errorGCP=0d;
+        double errorBing=0d;
+
+        //We need know to do the mean of the result
+        for (Map<String, Object> map : totalResultGCP) {
+            //printResult(map);
+            try {
+                errorGCP += (double)map.get("Percentage_total_error");
+            }catch (NullPointerException npe){
+                System.out.println("Attribute 'Percentage_total_error' nor found !");
+            }
+        }
+        errorGCP/=(double)totalResultGCP.size();
+
+
+        for (Map<String, Object> map : totalResultBing) {
+            try {
+                errorBing += (double)map.get("Percentage_total_error");
+            }catch (NullPointerException npe){
+                System.out.println("Attribute 'Percentage_total_error' nor found !");
+            }
+        }
+        errorBing/=(double)totalResultBing.size();
+
+        System.out.println("Percentage_total_error of GCP is : "+((int)(errorGCP*100))/100d+"%");
+        System.out.println("Percentage_total_error of Bing is : "+((int)(errorBing*100))/100d+"%");
+
     }
 
-    private static void compareServices(String audioFileName, String expectedResult, String lang) {
+    private static Map[] compareServices(String audioFileName, String expectedResult, String lang) {
         String resultGoogle;
         String resultBing;
+
+        Map[] stats = new Map[2];
 
         try {
             resultGoogle = GoogleRecognizer.RecognizeFile(audioFileName, lang);
             System.out.println("GCP Speech Api Call:");
             System.out.println(resultGoogle);
-            final Map<String, Integer> GoogleStats = ApproximateStringMatching.computeDistance(expectedResult, resultGoogle);
+            stats[0] = new ApproximateStringMatching().computeDistance(expectedResult, resultGoogle);
 
             resultBing = BingRecognizer.process(audioFileName, lang);
             if (resultBing != null) {
                 System.out.println("Bing Speech Api Call:");
                 System.out.println(resultBing);
-                final Map<String, Integer> BingStats = ApproximateStringMatching.computeDistance(expectedResult, resultBing);
+                stats[1] = new ApproximateStringMatching().computeDistance(expectedResult, resultBing);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return;
+            return stats;
         }
-        /*for (String word: result.split(" ")) {
 
-        }*/
+
+        return stats;
     }
 }
