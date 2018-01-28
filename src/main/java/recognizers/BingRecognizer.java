@@ -19,19 +19,19 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 package recognizers;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import utility.BingAuthentication;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.stream.Collectors;
-
-import utility.BingAuthentication;
 
 public class BingRecognizer {
 
@@ -94,11 +94,18 @@ public class BingRecognizer {
     return connection;
   }
 
-  public static  String process(InputStream is, String langCode) throws IOException {
-    return getResponse(upload(is, connect(langCode)));
-  }
-
-  public static String process(Path filepath, String langCode) throws IOException {
-    return getResponse(upload(filepath, connect(langCode)));
+  public static String process(String filename, String langCode) throws IOException {
+      final Path filepath = Paths.get(filename);
+    JsonParser parser = new JsonParser();
+    String res = getResponse(upload(filepath, connect(langCode)));
+    JsonObject o = parser.parse(res).getAsJsonObject();
+    if(o.has("RecognitionStatus")){
+        final JsonObject bestResult = o.getAsJsonArray("NBest").get(0).getAsJsonObject();
+        final String itn = bestResult.get("ITN").toString();
+        return itn.substring(1, itn.length()-1).toLowerCase(Locale.forLanguageTag(langCode));
+    }
+    else{
+        return null;
+    }
   }
 }

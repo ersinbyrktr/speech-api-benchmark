@@ -44,7 +44,7 @@ public class ApproximateStringMatching {
         //Travel the matrix recursively to see if it is an insertion, deletion or substitution
         backwardWalking(weight.length-1, weight[0].length-1);
 
-        printWeight();
+        //printWeight();
         printResult(answer);
 
         return answer;
