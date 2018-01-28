@@ -14,17 +14,14 @@ public class ApproximateStringMatching {
     private static int weight[][];
 
     public static void main(String[] args){
-        String reference = "hello aze";
-        String output = "hellos baze";
+        String reference = "hello world";
+        String output = "hello wold rty";
         computeDistance(reference, output);
     }
 
     public static Map<String, Integer> computeDistance(String reference, String output){
-
-
-        answer.put("Insertion", 0);
-        answer.put("Deletion", 0);
-        answer.put("Substitution", 0);
+        answer.put("Reference_length", reference.length());
+        answer.put("Output_length", output.length());
 
 
         //Initialization
@@ -39,10 +36,19 @@ public class ApproximateStringMatching {
                 weight[i][j] = Math.min(weight[i - 1][j - 1] + cost, Math.min(weight[i - 1][j]+1, weight[i][j - 1]+1));
             }
         }
-        answer.put("Total", weight[weight.length-1][weight[0].length-1]);
+        answer.put("Insertion", 0);
+        answer.put("Deletion", 0);
+        answer.put("Substitution", 0);
+        answer.put("Total_error", weight[weight.length-1][weight[0].length-1]);
 
         //Travel the matrix recursively to see if it is an insertion, deletion or substitution
         backwardWalking(weight.length-1, weight[0].length-1);
+
+        answer.put("Percentage_insertion", answer.get("Insertion")/reference.length());
+        answer.put("Percentage_deletion", answer.get("Deletion")/reference.length());
+        answer.put("Percentage_substitution", answer.get("Substitution")/reference.length());
+        answer.put("Percentage_total_error", answer.get("Total_error")/reference.length());
+
 
         //printWeight();
         printResult(answer);
